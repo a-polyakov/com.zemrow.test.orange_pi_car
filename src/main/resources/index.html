@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Car</title>
+    <script>
+        function send() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "", true);
+            xhr.setRequestHeader("Content-type", "application/json");
+            xhr.onreadystatechange = function () {
+//                if (xhr.readyState === 4 && xhr.status === 200) {
+//                    var json = JSON.parse(xhr.responseText);
+//                    console.log(json.email + ", " + json.password);
+//                }
+            };
+            var data = JSON.stringify(
+                {
+                    "speed": document.getElementById("speed").value,
+                    "helm": document.getElementById("helm").value,
+                    "camLeftRight": -document.getElementById("camLeftRight").value,
+                    "camTopButton": document.getElementById("camTopButton").value
+                });
+            xhr.send(data);
+        }
+    </script>
+</head>
+<body>
+<img src="http://192.168.1.72:8080/?action=stream" />
+<table>
+    <tr>
+        <td><label for="speed">Speed:</label></td>
+        <td><input id="speed" type="range" min="-100" max="100" value="0" onchange="send()"></td>
+    </tr>
+    <tr>
+        <td><label for="helm">Helm:</label></td>
+        <td><input id="helm" type="range" min="-50" max="50" value="0" onchange="send()"></td>
+    </tr>
+    <tr>
+        <td><label for="camLeftRight">camLeftRight:</label></td>
+        <td><input id="camLeftRight" type="range" min="-90" max="90" value="0" onchange="send()"></td>
+    </tr>
+    <tr>
+        <td><label for="camTopButton">camTopButton:</label></td>
+        <td><input id="camTopButton" type="range" min="0" max="90" value="0" onchange="send()"></td>
+    </tr>
+</table>
+<input type="submit" value="Send" onclick="send()">
+</body>
+</html>
