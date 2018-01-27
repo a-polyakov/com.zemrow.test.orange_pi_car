@@ -14,11 +14,21 @@ public class Car {
     public static final String CAM_LEFT_RIGHT = "camLeftRight";
     public static final String CAM_TOP_BUTTON = "camTopButton";
 
+    public static final int HELM_MIN = -50;
+    public static final int HELM_MAX = 50;
+
+    public static final int CAM_LEFT_RIGHT_MIN = -90;
+    public static final int CAM_LEFT_RIGHT_MAX = 90;
+
+    public static final int CAM_TOP_BUTTON_MIN = 0;
+    public static final int CAM_TOP_BUTTON_MAX = 90;
+
+
     private final Motor leftMotor;
     private final Motor rightMotor;
-    private final Servo helm;
-    private final Servo camLeftRight;
-    private final Servo camTopButton;
+    protected final Servo helm;
+    protected final Servo camLeftRight;
+    protected final Servo camTopButton;
 
     public Car(Motor leftMotor, Motor rightMotor, Servo helm, Servo camLeftRight, Servo camTopButton) {
         this.leftMotor = leftMotor;
@@ -30,45 +40,45 @@ public class Car {
 
     public void read(Reader reader) throws Exception {
         final JSONObject json = new JSONObject(new JSONTokener(reader));
-        setSpeed(json.getInt(SPEED));
         setHelm(json.getInt(HELM));
+        setSpeed(json.getInt(SPEED));
         setCamLeftRight(json.getInt(CAM_LEFT_RIGHT));
         setCamTopButton(json.getInt(CAM_TOP_BUTTON));
     }
 
     public void write(Writer writer) throws IOException {
         writer.write('{');
-        writer.write(SPEED + ':' + leftMotor.getSpeed());
-        writer.write(HELM + ':' + helm.getValue());
-        writer.write(CAM_LEFT_RIGHT + ':' + camLeftRight.getValue());
-        writer.write(CAM_TOP_BUTTON + ':' + camTopButton.getValue());
+        writer.write(SPEED + ':' + leftMotor.getSpeed() + ',');
+        writer.write(HELM + ':' + helm.getAngle() + ',');
+        writer.write(CAM_LEFT_RIGHT + ':' + camLeftRight.getAngle() + ',');
+        writer.write(CAM_TOP_BUTTON + ':' + camTopButton.getAngle());
         writer.write('}');
     }
 
     public void setSpeed(int speed) throws Exception {
-        leftMotor.setSpeed(speed);
-        rightMotor.setSpeed(speed);
+        // при повороте руля скорость колеса двигающегося по внутринему радиусу уменьшаем
+        if (helm.getAngle() > HELM_MAX / 2) {
+            leftMotor.setSpeed(speed / 2);
+        } else {
+            leftMotor.setSpeed(speed);
+        }
+        if (helm.getAngle() < HELM_MIN / 2) {
+            rightMotor.setSpeed(speed / 2);
+        } else {
+            rightMotor.setSpeed(speed);
+        }
     }
 
     public void setHelm(int helm) throws Exception {
-        if (helm < -50 || helm > 50) {
-            throw new IllegalArgumentException("Helm angle " + helm + " not range -50..50");
-        }
-        this.helm.setValue(450 + helm * 500 / 180);
+        this.helm.setAngle(helm);
     }
 
     public void setCamLeftRight(int angle) throws Exception {
-        if (angle < -90 || angle > 90) {
-            throw new IllegalArgumentException("CamLeftRight angle " + angle + " not range -90..90");
-        }
-        camLeftRight.setValue(450 + angle * 500 / 180);
+        camLeftRight.setAngle(angle);
     }
 
     public void setCamTopButton(int angle) throws Exception {
-        if (angle < 0 || angle > 90) {
-            throw new IllegalArgumentException("CamTopButton angle " + angle + " not range 0..90");
-        }
-        camTopButton.setValue(200 + angle * 200 / 90);
+        camTopButton.setAngle(angle);
     }
 }
 

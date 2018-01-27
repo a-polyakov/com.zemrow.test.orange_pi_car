@@ -27,7 +27,7 @@ public class PiMotor extends Motor {
                 pinA.low();
                 pinB.low();
             } else {
-                PCA9685Helper.write(device, i2cSpeedChannel, 0, PCA9685Helper.MAX_VALUE * Math.abs(speed) / 100);
+                PCA9685Helper.write(device, i2cSpeedChannel, 0, PCA9685Helper.MAX_VALUE * Math.abs(speed) / SPEED_MAX);
                 if (speed > 0) {
                     pinA.low();
                     pinB.high();

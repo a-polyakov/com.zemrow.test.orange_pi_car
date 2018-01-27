@@ -4,6 +4,192 @@
     <meta charset="UTF-8">
     <title>Car</title>
     <script>
+        var speedMaxTime = 2000;
+        var speedMin = -100;
+        var speedMax = 100;
+        var helmMaxTime = 1000;
+        var helmMin = -50;
+        var helmMax = 50;
+        var camLeftRightMaxTime = 5000;
+        var camLeftRightMin = -90;
+        var camLeftRightMax = 90;
+        var camTopButtonMaxTime = 5000;
+        var camTopButtonMax = 90;
+
+        var speed = 0;
+        var speedDirection = 1;
+        var speedHold = 0;
+        var helm = 0;
+        var helmDirection = 1;
+        var helmHold = 0;
+        var camLeftRight = 0;
+        var camLeftRightDirection = 1;
+        var camLeftRightHold = 0;
+        var camTopButton = 0;
+        var camTopButtonDirection = 1;
+        var camTopButtonHold = 0;
+
+        document.onkeydown = function (event) {
+            switch (event.keyCode) {
+                case 38: //UP
+                    if (speedHold == 0) {
+                        speedDirection = 1;
+                        speedHold = Date.now();
+                    }
+                    break;
+                case 40: // DOWN
+                    if (speedHold == 0) {
+                        speedDirection = -1;
+                        speedHold = Date.now();
+                    }
+                    break;
+                case 39: // RIGHT
+                    if (helmHold == 0) {
+                        helmDirection = 1;
+                        helmHold = Date.now();
+                    }
+                    break;
+                case 37: // LEFT
+                    if (helmHold == 0) {
+                        helmDirection = -1;
+                        helmHold = Date.now();
+                    }
+                    break;
+                case 87: // W
+                    if (camTopButtonHold == 0) {
+                        camTopButtonDirection = 1;
+                        camTopButtonHold = Date.now();
+                    }
+                    break;
+                case 83: // S
+                    if (camTopButtonHold == 0) {
+                        camTopButtonDirection = -1;
+                        camTopButtonHold = Date.now();
+                    }
+                    break;
+                case 65: // A
+                    if (camLeftRightHold == 0) {
+                        camLeftRightDirection = -1;
+                        camLeftRightHold = Date.now();
+                    }
+                    break;
+                case 68: // D
+                    if (camLeftRightHold == 0) {
+                        camLeftRightDirection = 1;
+                        camLeftRightHold = Date.now();
+                    }
+                    break;
+            }
+        };
+
+        document.onkeyup = function (event) {
+            switch (event.keyCode) {
+                case 38: //UP
+                    speedHold = 0;
+                    speed = 0;
+                    document.getElementById("speed").value = speed;
+                    send();
+                    break;
+                case 40: // DOWN
+                    speedHold = 0;
+                    speed = 0;
+                    document.getElementById("speed").value = speed;
+                    send();
+                    break;
+                case 39: // RIGHT
+                    helmHold = 0;
+                    helm = 0;
+                    document.getElementById("helm").value = helm;
+                    send();
+                    break;
+                case 37: // LEFT
+                    helmHold = 0;
+                    helm = 0;
+                    document.getElementById("helm").value = helm;
+                    send();
+                    break;
+                case 87: // W
+                    camTopButtonHold = 0;
+                    break;
+                case 83: // S
+                    camTopButtonHold = 0;
+                    break;
+                case 65: // A
+                    camLeftRightHold = 0;
+                    break;
+                case 68: // D
+                    camLeftRightHold = 0;
+                    break;
+            }
+        };
+
+        setInterval(function () {
+            var needSend = false;
+            if (speedHold != 0) {
+                var d = Date.now() - speedHold;
+                var max = (speedDirection == 1) ? speedMax : speedMin;
+                var newSpeed = d * max / speedMaxTime;
+                if (newSpeed > speedMax) {
+                    newSpeed = speedMax;
+                } else if (newSpeed < speedMin) {
+                    newSpeed = speedMin;
+                }
+                if (speed != newSpeed) {
+                    speed = newSpeed;
+                    document.getElementById("speed").value = speed;
+                    needSend = true;
+                }
+            }
+            if (helmHold != 0) {
+                var d = Date.now() - helmHold;
+                var max = (helmDirection == 1) ? helmMax : helmMin;
+                var newHelm = d * max / helmMaxTime;
+                if (newHelm > camLeftRightMax) {
+                    newHelm = camLeftRightMax;
+                } else if (newHelm < camLeftRightMin) {
+                    newHelm = camLeftRightMin;
+                }
+                if (helm != newHelm) {
+                    helm = newHelm;
+                    document.getElementById("helm").value = helm;
+                    needSend = true;
+                }
+            }
+            if (camTopButtonHold != 0) {
+                var d = Date.now() - camTopButtonHold;
+                var max = camTopButtonDirection * camTopButtonMax;
+                var newCamTopButton = camTopButton + d * max / camTopButtonMaxTime;
+                if (newCamTopButton > camTopButtonMax) {
+                    newCamTopButton = camTopButtonMax;
+                } else if (newCamTopButton < 0) {
+                    newCamTopButton = 0;
+                }
+                if (camTopButton != newCamTopButton) {
+                    camTopButton = newCamTopButton;
+                    document.getElementById("camTopButton").value = camTopButton;
+                    needSend = true;
+                }
+            }
+            if (camLeftRightHold != 0) {
+                var d = Date.now() - camLeftRightHold;
+                var max = (camLeftRightDirection == 1) ? camLeftRightMax : camLeftRightMin;
+                var newCamLeftRight = camLeftRight + d * max / camLeftRightMaxTime;
+                if (newCamLeftRight > camLeftRightMax) {
+                    newCamLeftRight = camLeftRightMax;
+                } else if (newCamLeftRight < camLeftRightMin) {
+                    newCamLeftRight = camLeftRightMin;
+                }
+                if (camLeftRight != newCamLeftRight) {
+                    camLeftRight = newCamLeftRight;
+                    document.getElementById("camLeftRight").value = camLeftRight;
+                    needSend = true;
+                }
+            }
+            if (needSend) {
+                send();
+            }
+        }, 100);
+
         function send() {
             var xhr = new XMLHttpRequest();
             xhr.open("POST", "", true);
@@ -16,35 +202,39 @@
             };
             var data = JSON.stringify(
                 {
-                    "speed": document.getElementById("speed").value,
-                    "helm": document.getElementById("helm").value,
-                    "camLeftRight": -document.getElementById("camLeftRight").value,
-                    "camTopButton": document.getElementById("camTopButton").value
+                    "speed": speed,
+                    "helm": helm,
+                    "camLeftRight": -camLeftRight,
+                    "camTopButton": camTopButton
                 });
             xhr.send(data);
         }
     </script>
 </head>
 <body>
-<img src="http://192.168.1.78:8080/?action=stream" />
+<img src="http://192.168.1.78:8080/?action=stream"/>
 <table>
     <tr>
         <td><label for="speed">Speed:</label></td>
-        <td><input id="speed" type="range" min="-100" max="100" value="0" onchange="send()"></td>
+        <td><input id="speed" type="range" min="-100" max="100" value="0"
+                   onchange="speed=parseInt(document.getElementById('speed').value); send()"></td>
     </tr>
     <tr>
         <td><label for="helm">Helm:</label></td>
-        <td><input id="helm" type="range" min="-50" max="50" value="0" onchange="send()"></td>
+        <td><input id="helm" type="range" min="-50" max="50" value="0"
+                   onchange="helm=parseInt(document.getElementById('helm').value);send()"></td>
     </tr>
     <tr>
         <td><label for="camLeftRight">camLeftRight:</label></td>
-        <td><input id="camLeftRight" type="range" min="-90" max="90" value="0" onchange="send()"></td>
+        <td><input id="camLeftRight" type="range" min="-90" max="90" value="0"
+                   onchange="camLeftRight=parseInt(document.getElementById('camLeftRight').value);send()"></td>
     </tr>
     <tr>
         <td><label for="camTopButton">camTopButton:</label></td>
-        <td><input id="camTopButton" type="range" min="0" max="90" value="0" onchange="send()"></td>
+        <td><input id="camTopButton" type="range" min="0" max="90" value="0"
+                   onchange="camTopButton=parseInt(document.getElementById('camTopButton').value); send()"></td>
     </tr>
 </table>
-<input type="submit" value="Home" onclick="document.getElementById('speed').value=0; send()">
+<input type="submit" value="Home" onclick="speed=0; document.getElementById('speed').value=0; send()">
 </body>
 </html>

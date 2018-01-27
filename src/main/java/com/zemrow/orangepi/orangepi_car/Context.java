@@ -12,6 +12,11 @@ import com.pi4j.platform.PlatformManager;
 import java.io.IOException;
 
 public class Context {
+    /**
+     * Частота для PCA9685
+     */
+    public static final int FREQ = 100;
+
     private final GpioController gpio;
     private final I2CBus i2c;
     private final PiCar car;
@@ -24,7 +29,7 @@ public class Context {
         i2c = I2CFactory.getInstance(I2CBus.BUS_0);
         System.out.println(System.currentTimeMillis() + " I2C");
         I2CDevice device = i2c.getDevice(PCA9685Helper.I2C_ADDRESS);
-        PCA9685Helper.setPWMFreq(device, 60);
+        PCA9685Helper.setPWMFreq(device, FREQ);
         System.out.println(System.currentTimeMillis() + " PCA9685");
         car = new PiCar(gpio, device);
         System.out.println(System.currentTimeMillis() + " Car");

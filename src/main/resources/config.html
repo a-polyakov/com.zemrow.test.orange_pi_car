@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Car config</title>
+    <script>
+        function send(servo_name, min, max, check_angle) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "config", true);
+            xhr.setRequestHeader("Content-type", "application/json");
+            xhr.onreadystatechange = function () {
+//                if (xhr.readyState === 4 && xhr.status === 200) {
+//                    var json = JSON.parse(xhr.responseText);
+//                    console.log(json.email + ", " + json.password);
+//                }
+            };
+            var data = JSON.stringify(
+                {
+                    "servo_name": servo_name,
+                    "min": min,
+                    "max": max,
+                    "check_angle": check_angle
+                });
+            xhr.send(data);
+        }
+
+        function a1(check_angle) {
+            var min = document.getElementById("helm_min").value;
+            var max = document.getElementById("helm_max").value;
+            send("helm", min, max, check_angle);
+        }
+
+        function a2(check_angle) {
+            var min = document.getElementById("camLeftRight_min").value;
+            var max = document.getElementById("camLeftRight_max").value;
+            send("camLeftRight", min, max, check_angle);
+        }
+
+        function a3(check_angle) {
+            var min = document.getElementById("camTopButton_min").value;
+            var max = document.getElementById("camTopButton_max").value;
+            send("camTopButton", min, max, check_angle);
+        }
+
+        function solveHelmAverage() {
+            var min = parseInt(document.getElementById("helm_min").value);
+            var max = parseInt(document.getElementById("helm_max").value);
+            var average = (min + max) / 2;
+            document.getElementById("helm_average").innerHTML = average;
+        }
+
+        function solveCamLeftRightAverage() {
+            var min = parseInt(document.getElementById("camLeftRight_min").value);
+            var max = parseInt(document.getElementById("camLeftRight_max").value);
+            var average = (min + max) / 2;
+            document.getElementById("camLeftRight_average").innerHTML = average;
+        }
+
+        function solveCamTopButtonAverage() {
+            var min = parseInt(document.getElementById("camTopButton_min").value);
+            var max = parseInt(document.getElementById("camTopButton_max").value);
+            var average = (min + max) / 2;
+            document.getElementById("camTopButton_average").innerHTML = average;
+        }
+    </script>
+</head>
+<body>
+Калибровка работы серво приводов
+<table>
+    <tr>
+        <th>Свойство</th>
+        <th>Минимальное<br>значение</th>
+        <th>raw value</th>
+        <th></th>
+        <th>Среднее<br>значение</th>
+        <th>raw value</th>
+        <th></th>
+        <th>Максимальное<br>значение</th>
+        <th>raw value</th>
+        <th></th>
+    </tr>
+    <tr>
+        <td>Поворот руля</td>
+        <td>-90</td>
+        <td><input id="helm_min" type="text" value="500" onchange="solveHelmAverage()"></td>
+        <th><input type="button" value="Проверить -50" onclick="a1(-50)"></th>
+        <td>0</td>
+        <td><span id="helm_average">1500</span></td>
+        <th><input type="button" value="Проверить 0" onclick="a1(0)"></th>
+        <td>90</td>
+        <td><input id="helm_max" type="text" value="2500" onchange="solveHelmAverage()"></td>
+        <th><input type="button" value="Проверить 50" onclick="a1(50)"></th>
+    </tr>
+    <tr>
+        <td>Поворот камеры</td>
+        <td>-90</td>
+        <td><input id="camLeftRight_min" type="text" value="500" onchange="solveCamLeftRightAverage()"></td>
+        <th><input type="button" value="Проверить -90" onclick="a2(-90)"></th>
+        <td>0</td>
+        <td><span id="camLeftRight_average">1500</span></td>
+        <th><input type="button" value="Проверить 0" onclick="a2(0)"></th>
+        <td>90</td>
+        <td><input id="camLeftRight_max" type="text" value="2500" onchange="solveCamLeftRightAverage()"></td>
+        <th><input type="button" value="Проверить 90" onclick="a2(90)"></th>
+    </tr>
+    <tr>
+        <td>Угол камеры по высоте</td>
+        <td>-90</td>
+        <td><input id="camTopButton_min" type="text" value="500" onchange="solveCamTopButtonAverage()"></td>
+        <th></th>
+        <td>0</td>
+        <td><span id="camTopButton_average">1500</span></td>
+        <th><input type="button" value="Проверить 0" onclick="a3(0)"></th>
+        <td>90</td>
+        <td><input id="camTopButton_max" type="text" value="2500" onchange="solveCamTopButtonAverage()"></td>
+        <th><input type="button" value="Проверить 90" onclick="a3(90)"></th>
+    </tr>
+</table>
+<!--TODO-->
+<input type="button" value="Сохранить">
+
+</body>
+</html>

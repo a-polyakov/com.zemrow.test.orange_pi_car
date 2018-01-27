@@ -17,14 +17,25 @@ public class PiCar extends Car {
     private static final int CAM_LEFT_RIGHT_I2C_CHANNEL = 14;
     private static final int CAM_TOP_BUTTON_I2C_CHANNEL = 15;
 
-
     public PiCar(GpioController gpio, I2CDevice device) {
         super(
                 new PiMotor(gpio, device, MOTOR_LEFT_PIN_A, MOTOR_LEFT_PIN_B, MOTOR_LEFT_I2C_SPEED_CHANNEL),
                 new PiMotor(gpio, device, MOTOR_RIGHT_PIN_A, MOTOR_RIGHT_PIN_B, MOTOR_RIGHT_I2C_SPEED_CHANNEL),
-                new PiServo(device, HELM_I2C_CHANNEL),
-                new PiServo(device, CAM_LEFT_RIGHT_I2C_CHANNEL),
-                new PiServo(device, CAM_TOP_BUTTON_I2C_CHANNEL)
-                );
+                new PiServo(device, HELM_I2C_CHANNEL, HELM, HELM_MIN, HELM_MAX),
+                new PiServo(device, CAM_LEFT_RIGHT_I2C_CHANNEL, CAM_LEFT_RIGHT, CAM_LEFT_RIGHT_MIN, CAM_LEFT_RIGHT_MAX),
+                new PiServo(device, CAM_TOP_BUTTON_I2C_CHANNEL, CAM_TOP_BUTTON, CAM_TOP_BUTTON_MIN, CAM_TOP_BUTTON_MAX)
+        );
+    }
+
+    public void configHelm(int min, int max) {
+        ((PiServo) helm).config(min, max);
+    }
+
+    public void configCamLeftRight(int min, int max) {
+        ((PiServo) camLeftRight).config(min, max);
+    }
+
+    public void configCamTopButton(int min, int max) {
+        ((PiServo) camTopButton).config(min, max);
     }
 }
